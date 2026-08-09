@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Youth Football Scout DB | 5万青年球员数据库</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#e6e6e6;min-height:100vh;line-height:1.5}
+.header{background:linear-gradient(135deg,#0d2818,#1a472a,#0d2818);border-bottom:2px solid #d4a843;padding:1.2rem 2rem;text-align:center}
+.header h1{font-size:1.6rem;color:#d4a843;letter-spacing:.05em}
+.header .sub{font-size:.8rem;color:#8b949e;margin-top:.15rem}
+.loading-bar{background:#161b22;padding:.5rem 2rem;text-align:center;font-size:.8rem;color:#d4a843}
+.loading-bar .bar{height:4px;background:#21262d;border-radius:2px;margin-top:.4rem;overflow:hidden}
+.loading-bar .bar-fill{height:100%;background:linear-gradient(90deg,#1a472a,#d4a843);width:0%;transition:width .3s}
+.controls{background:#161b22;border-bottom:1px solid #30363d;padding:.8rem 1.5rem;display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;justify-content:center;position:sticky;top:0;z-index:99}
+.control-group{display:flex;align-items:center;gap:.4rem}
+.control-group label{font-size:.75rem;color:#8b949e;white-space:nowrap}
+select,input[type=text]{background:#21262d;border:1px solid #30363d;color:#e6e6e6;padding:.35rem .6rem;border-radius:5px;font-size:.8rem;outline:none}
+select:focus,input:focus{border-color:#d4a843}
+select{min-width:100px;cursor:pointer}
+input[type=text]{width:170px}
+.age-display{background:#1a472a;color:#d4a843;padding:.2rem .5rem;border-radius:4px;font-weight:700;font-size:.85rem;min-width:70px;text-align:center}
+input[type=range]{-webkit-appearance:none;height:5px;background:#30363d;border-radius:3px;outline:none;flex:1}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:#d4a843;border-radius:50%;cursor:pointer}
+.sort-btn{background:#21262d;border:1px solid #30363d;color:#e6e6e6;padding:.35rem .6rem;border-radius:5px;font-size:.75rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+.sort-btn:hover,.sort-btn.active{background:#1a472a;border-color:#d4a843;color:#d4a843}
+.count-bar{padding:.5rem 1.5rem;font-size:.75rem;color:#8b949e;display:flex;justify-content:space-between;flex-wrap:wrap}
+.count-bar span{color:#d4a843}
+.cards-grid{padding:0 1rem 1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+.card{background:#161b22;border:1px solid #30363d;border-radius:10px;overflow:hidden;transition:transform .15s,border-color .15s;cursor:pointer}
+.card:hover{transform:translateY(-1px);border-color:#d4a843;box-shadow:0 4px 16px rgba(212,168,67,.12)}
+.card-header{background:linear-gradient(135deg,#1a2a1e,#1e1e2e);padding:.8rem;display:flex;align-items:center;gap:.6rem;border-bottom:1px solid #30363d}
+.card-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1a472a,#2d6a3f);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;border:2px solid #30363d;color:#d4a843;font-weight:700}
+.player-basic{flex:1;min-width:0}
+.player-name{font-size:1rem;font-weight:700;color:#fff}
+.player-meta{display:flex;gap:.3rem;margin-top:.25rem;flex-wrap:wrap}
+.meta-tag{font-size:.65rem;padding:.1rem .4rem;border-radius:8px;font-weight:600}
+.meta-tag.age{background:#1a472a;color:#d4a843}
+.meta-tag.pos{background:#21262d;color:#e6e6e6;border:1px solid #30363d}
+.meta-tag.club{background:#21262d;color:#8b949e}
+.card-stats{padding:.6rem .8rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;border-bottom:1px solid #21262d}
+.stat-item{text-align:center}
+.stat-val{font-size:1rem;font-weight:700;color:#fff}
+.stat-label{font-size:.6rem;color:#8b949e}
+.card-rating{padding:.6rem .8rem}
+.overall-rating{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+.overall-score{font-size:1.4rem;font-weight:800;color:#d4a843}
+.rating-bar-bg{flex:1;height:6px;background:#21262d;border-radius:3px;margin-left:.6rem;overflow:hidden}
+.rating-bar-fill{height:100%;border-radius:3px}
+.rating-bar-fill.high{background:#22c55e}.rating-bar-fill.mid{background:#eab308}.rating-bar-fill.low{background:#ef4444}
+.mini-dims{display:grid;grid-template-columns:repeat(5,1fr);gap:.3rem;margin-top:.4rem}
+.mini-dim{text-align:center;font-size:.55rem}
+.mini-dim i{font-size:.8rem}
+.mini-dim s{font-weight:700;font-size:.75rem;margin-top:.05rem;display:block}
+.card-detail{display:none;padding:.7rem;background:#1a1d2e;border-top:1px solid #30363d}
+.card-detail.open{display:block}
+.detail-title{font-size:.7rem;color:#d4a843;margin-bottom:.5rem}
+.dim-row{margin-bottom:.4rem}
+.dim-row-header{display:flex;justify-content:space-between;font-size:.75rem}
+.dim-row-score{font-weight:700;color:#d4a843}
+.dim-row-bar{height:5px;background:#21262d;border-radius:2px;margin-top:.15rem;overflow:hidden}
+.dim-row-bar-fill{height:100%;border-radius:2px}
+.dim-row-text{font-size:.65rem;color:#8b949e;margin-top:.1rem}
+.mv-badge{font-size:.65rem;padding:.1rem .4rem;border-radius:8px;background:#2d1f0e;color:#d4a843;border:1px solid #5a3e1b}
+.footer{text-align:center;padding:1.5rem;font-size:.65rem;color:#484f58;border-top:1px solid #21262d}
+.no-results{grid-column:1/-1;text-align:center;padding:3rem;color:#8b949e}
+@media(max-width:768px){.cards-grid{grid-template-columns:1fr;padding:0 .5rem .5rem}.header h1{font-size:1.2rem}.controls{flex-direction:column;align-items:stretch}}
+@media(min-width:1400px){.cards-grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header class="header">
+<h1>⚽ Youth Football Scout DB</h1>
+<div class="sub">全球22岁及以下 · 5万青年球员 · 每日12:00自动更新 · FBref/Transfermarkt/NXGN/FM数据</div>
+</header>
+<div class="loading-bar" id="loadStatus">
+  <div id="loadText">正在加载数据...</div>
+  <div class="bar"><div class="bar-fill" id="loadBar"></div></div>
+</div>
+<div class="controls">
+  <div class="control-group">
+    <label>年龄</label>
+    <span class="age-display" id="ageDisplay">16-22</span>
+    <input type="range" id="ageMin" min="16" max="22" value="16">
+    <input type="range" id="ageMax" min="16" max="22" value="22">
+  </div>
+  <div class="control-group">
+    <label>位置</label>
+    <select id="posFilter"><option value="all">全部</option><option value="ST">ST</option><option value="LW">LW</option><option value="RW">RW</option><option value="CAM">CAM</option><option value="CM">CM</option><option value="CDM">CDM</option><option value="CB">CB</option><option value="LB">LB</option><option value="RB">RB</option><option value="GK">GK</option></select>
+  </div>
+  <div class="control-group">
+    <label>国籍</label>
+    <select id="nationFilter"><option value="all">全部</option></select>
+  </div>
+  <div class="control-group">
+    <input type="text" id="searchInput" placeholder="🔍 搜索姓名...">
+  </div>
+  <div style="display:flex;gap:.2rem;flex-wrap:wrap">
+    <button class="sort-btn active" data-sort="o">评分</button>
+    <button class="sort-btn" data-sort="a">年龄</button>
+    <button class="sort-btn" data-sort="g">进球</button>
+    <button class="sort-btn" data-sort="u">潜力</button>
+    <button class="sort-btn" data-sort="v">身价</button>
+  </div>
+</div>
+<div class="count-bar">
+  <span id="playerCount">显示 0 名球员</span>
+  <span id="updateTime"></span>
+</div>
+<div class="cards-grid" id="cardsGrid"></div>
+<footer class="footer">
+  📊 数据来源: FBref · Transfermarkt · Goal NXGN · Guardian Next Gen · FM2026 · CIES &nbsp;|&nbsp; 📐 算法: 球探50%+数据30%+市场20% &nbsp;|&nbsp; 🕐 每日北京时间12:00更新 &nbsp;|&nbsp; © 2026 Youth Scout DB
+</footer>
+
+<script src="players_data.js"></script>
+<script>
+// ========== App State ==========
+let allPlayers = [];
+let currentSort = 'o';
+let sortDesc = true;
+const PAGE_SIZE = 100;
+let renderedCount = 0;
+
+// ========== Data Loading ==========
+function loadData() {
+  const status = document.getElementById('loadStatus');
+  const text = document.getElementById('loadText');
+  const bar = document.getElementById('loadBar');
+
+  try {
+    if (typeof DB !== 'undefined' && DB.pl) {
+      text.textContent = '正在处理 50,000 名球员数据...';
+      bar.style.width = '50%';
+
+      // Map compact format to full format
+      allPlayers = DB.pl.map((p, i) => {
+        const sc = p.sc;
+        return {
+          id: `p${i}`,
+          name: p.n,
+          name_cn: '',
+          age: p.a,
+          nationality_flag: p.f,
+          club: p.c,
+          position: p.p,
+          height_cm: p.h,
+          foot: p.ft === 'R' ? 'Right' : p.ft === 'L' ? 'Left' : 'Both',
+          market_value_eur: p.v,
+          stats: { appearances: p.s[0], goals: p.s[1], assists: p.s[2], xg_per90: p.r[0], avg_rating: p.r[1] },
+          scout_report: {
+            technical: { score: sc.t.s, text: sc.t.d },
+            physical: { score: sc.p.s, text: sc.p.d },
+            tactical: { score: sc.c.s, text: sc.c.d },
+            impact: { score: sc.i.s, text: sc.i.d },
+            potential: { score: sc.u.s, text: sc.u.d }
+          },
+          overall_rating: p.o,
+          sources: ['Transfermarkt','FBref'],
+          source_links: {}
+        };
+      });
+
+      bar.style.width = '100%';
+      text.textContent = '✅ 数据加载完成 · ' + allPlayers.length.toLocaleString() + ' 名球员';
+      document.getElementById('updateTime').textContent = '🕐 更新: ' + (DB.lu || '--');
+      status.className = 'loading-bar';
+
+      setTimeout(() => { status.style.display = 'none'; }, 1500);
+    } else {
+      throw new Error('No data');
+    }
+  } catch(e) {
+    text.textContent = '❌ 数据加载失败';
+    bar.style.width = '100%';
+    console.error(e);
+    return;
+  }
+
+  populateNations();
+  renderMore();
+  bindEvents();
+}
+
+// ========== Populate Nations ==========
+function populateNations() {
+  const seen = new Set();
+  const sel = document.getElementById('nationFilter');
+  allPlayers.forEach(p => {
+    const key = p.nationality_flag;
+    if (!seen.has(key)) {
+      seen.add(key);
+      const opt = document.createElement('option');
+      opt.value = p.nationality_flag;
+      opt.textContent = p.nationality_flag;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+// ========== Filter & Sort ==========
+function getFilteredPlayers() {
+  const ageMin = parseInt(document.getElementById('ageMin').value);
+  const ageMax = parseInt(document.getElementById('ageMax').value);
+  const posFilter = document.getElementById('posFilter').value;
+  const nationFilter = document.getElementById('nationFilter').value;
+  const search = document.getElementById('searchInput').value.toLowerCase();
+
+  let filtered = allPlayers.filter(p => {
+    if (p.age < ageMin || p.age > ageMax) return false;
+    if (posFilter !== 'all' && p.position !== posFilter) return false;
+    if (nationFilter !== 'all' && p.nationality_flag !== nationFilter) return false;
+    if (search && !p.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  const sortKeys = {
+    'o': p => p.overall_rating,
+    'a': p => p.age,
+    'g': p => p.stats.goals,
+    'u': p => p.scout_report.potential.score,
+    'v': p => p.market_value_eur || 0
+  };
+  const keyFn = sortKeys[currentSort];
+  filtered.sort((a, b) => sortDesc ? keyFn(b) - keyFn(a) : keyFn(a) - keyFn(b));
+
+  return filtered;
+}
+
+// ========== Formatting ==========
+function formatMV(eur) {
+  if (!eur) return '';
+  if (eur >= 1e8) return '€' + (eur/1e6).toFixed(0) + 'M';
+  if (eur >= 1e6) return '€' + (eur/1e6).toFixed(1) + 'M';
+  if (eur >= 1e3) return '€' + (eur/1e3).toFixed(0) + 'K';
+  return '€' + eur;
+}
+
+// ========== Virtual Rendering ==========
+function renderMore() {
+  const filtered = getFilteredPlayers();
+  const grid = document.getElementById('cardsGrid');
+
+  if (renderedCount === 0) {
+    grid.innerHTML = '';
+    document.getElementById('playerCount').textContent = '📋 显示 ' + filtered.length.toLocaleString() + ' / ' + allPlayers.length.toLocaleString() + ' 名球员';
+  }
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-results">😔 无匹配球员，请调整筛选</div>';
+    return;
+  }
+
+  const toRender = Math.min(renderedCount + PAGE_SIZE, filtered.length);
+  const batch = filtered.slice(renderedCount, toRender);
+
+  batch.forEach(p => {
+    grid.appendChild(createCard(p));
+  });
+
+  renderedCount = toRender;
+
+  if (renderedCount < filtered.length) {
+    document.getElementById('playerCount').textContent =
+      '📋 已加载 ' + renderedCount.toLocaleString() + ' / ' + filtered.length.toLocaleString() + ' 名 · 继续滚动加载更多';
+  }
+}
+
+function createCard(p) {
+  const sc = p.overall_rating >= 8.5 ? 'high' : p.overall_rating >= 7.5 ? 'mid' : 'low';
+  const dims = p.scout_report;
+  const dc = s => s >= 8.5 ? 'high' : s >= 7.5 ? 'mid' : 'low';
+  const mv = formatMV(p.market_value_eur);
+  const initials = p.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `
+    <div class="card-header" onclick="this.parentElement.querySelector('.card-detail').classList.toggle('open')">
+      <div class="card-avatar">${initials}</div>
+      <div class="player-basic">
+        <div class="player-name">${p.nationality_flag} ${p.name}</div>
+        <div class="player-meta">
+          <span class="meta-tag age">${p.age}岁</span>
+          <span class="meta-tag pos">${p.position}</span>
+          <span class="meta-tag club">${p.club}</span>
+          ${mv ? `<span class="mv-badge">💰 ${mv}</span>` : ''}
+        </div>
+      </div>
+    </div>
+    <div class="card-stats">
+      <div class="stat-item"><div class="stat-val">${p.stats.appearances}</div><div class="stat-label">出场</div></div>
+      <div class="stat-item"><div class="stat-val">${p.stats.goals} ⚽</div><div class="stat-label">进球</div></div>
+      <div class="stat-item"><div class="stat-val">${p.stats.assists} 🎯</div><div class="stat-label">助攻</div></div>
+    </div>
+    <div class="card-rating" onclick="this.parentElement.querySelector('.card-detail').classList.toggle('open')">
+      <div class="overall-rating">
+        <span class="overall-score">${p.overall_rating}<small style="font-size:.6rem;color:#8b949e">/10</small></span>
+        <div class="rating-bar-bg"><div class="rating-bar-fill ${sc}" style="width:${p.overall_rating*10}%"></div></div>
+      </div>
+      <div class="mini-dims">
+        <div class="mini-dim"><i>🎯</i><s>${dims.technical.score}</s></div>
+        <div class="mini-dim"><i>💪</i><s>${dims.physical.score}</s></div>
+        <div class="mini-dim"><i>🧠</i><s>${dims.tactical.score}</s></div>
+        <div class="mini-dim"><i>⚡</i><s>${dims.impact.score}</s></div>
+        <div class="mini-dim"><i>🚀</i><s>${dims.potential.score}</s></div>
+      </div>
+    </div>
+    <div class="card-detail">
+      <div class="detail-title">📋 详细球探报告</div>
+      ${dimRow('🎯 技术',dims.technical)}${dimRow('💪 身体',dims.physical)}${dimRow('🧠 战术',dims.tactical)}${dimRow('⚡ 影响',dims.impact)}${dimRow('🚀 潜力',dims.potential)}
+    </div>`;
+  return div;
+}
+
+function dimRow(label, dim) {
+  const c = dim.score >= 8.5 ? 'high' : dim.score >= 7.5 ? 'mid' : 'low';
+  return `<div class="dim-row">
+    <div class="dim-row-header"><span>${label}</span><span class="dim-row-score">${dim.score}/10</span></div>
+    <div class="dim-row-bar"><div class="dim-row-bar-fill ${c}" style="width:${dim.score*10}%"></div></div>
+    <div class="dim-row-text">${dim.text}</div></div>`;
+}
+
+// ========== Infinite Scroll ==========
+let scrollTimer;
+window.addEventListener('scroll', () => {
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => {
+    const grid = document.getElementById('cardsGrid');
+    if (!grid.lastElementChild) return;
+    const lastCard = grid.lastElementChild;
+    const rect = lastCard.getBoundingClientRect();
+    if (rect.top < window.innerHeight + 600) {
+      renderMore();
+    }
+  }, 100);
+}, {passive: true});
+
+// ========== Events ==========
+function bindEvents() {
+  const ageMin = document.getElementById('ageMin');
+  const ageMax = document.getElementById('ageMax');
+
+  const reRender = () => { renderedCount = 0; document.getElementById('cardsGrid').innerHTML = ''; renderMore(); };
+
+  ageMin.addEventListener('input', () => {
+    const min = parseInt(ageMin.value); const max = parseInt(ageMax.value);
+    if (min > max) ageMax.value = min;
+    document.getElementById('ageDisplay').textContent = ageMin.value + '-' + ageMax.value;
+    reRender();
+  });
+  ageMax.addEventListener('input', () => {
+    const min = parseInt(ageMin.value); const max = parseInt(ageMax.value);
+    if (max < min) ageMin.value = max;
+    document.getElementById('ageDisplay').textContent = ageMin.value + '-' + ageMax.value;
+    reRender();
+  });
+
+  document.getElementById('posFilter').addEventListener('change', reRender);
+  document.getElementById('nationFilter').addEventListener('change', reRender);
+  document.getElementById('searchInput').addEventListener('input', function() {
+    clearTimeout(this._timer);
+    this._timer = setTimeout(reRender, 300);
+  });
+
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.sort;
+      if (currentSort === key) sortDesc = !sortDesc;
+      else { currentSort = key; sortDesc = (key === 'a'); }
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      reRender();
+    });
+  });
+}
+
+// ========== Boot ==========
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof DB !== 'undefined' && DB.pl) {
+    loadData();
+  } else {
+    document.getElementById('loadText').textContent = '❌ 数据文件加载失败，请确保 players_data.js 在同一目录';
+  }
+});
+</script>
+</body>
+</html>
