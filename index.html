@@ -150,6 +150,26 @@ const PAGE_SIZE = 100;
 let renderedCount = 0;
 
 // ========== Data Loading ==========
+function mapPlayer(p, i) {
+  const sc = p.sc;
+  return {
+    id: `p${i}`, name: p.n, name_cn: '', age: p.a,
+    nationality_flag: p.f, nationality: FLAG_TO_NAME[p.f] || '',
+    club: p.c, position: p.p, height_cm: p.h,
+    foot: p.ft === 'R' ? 'Right' : p.ft === 'L' ? 'Left' : 'Both',
+    market_value_eur: p.v,
+    stats: { appearances: p.s[0], goals: p.s[1], assists: p.s[2], xg_per90: p.r[0], avg_rating: p.r[1] },
+    scout_report: {
+      technical: { score: sc.t.s, text: sc.t.d },
+      physical: { score: sc.p.s, text: sc.p.d },
+      tactical: { score: sc.c.s, text: sc.c.d },
+      impact: { score: sc.i.s, text: sc.i.d },
+      potential: { score: sc.u.s, text: sc.u.d }
+    },
+    overall_rating: p.o, sources: ['Transfermarkt','FBref'], source_links: {}
+  };
+}
+
 function loadData() {
   const status = document.getElementById('loadStatus');
   const text = document.getElementById('loadText');
@@ -157,49 +177,21 @@ function loadData() {
 
   try {
     if (typeof DB !== 'undefined' && DB.pl) {
-      text.textContent = '正在处理 50,000 名球员数据...';
+      text.textContent = '正在处理数据...';
       bar.style.width = '50%';
 
-      // Map compact format to full format
-      allPlayers = DB.pl.map((p, i) => {
-        const sc = p.sc;
-        return {
-          id: `p${i}`,
-          name: p.n,
-          name_cn: '',
-          age: p.a,
-          nationality_flag: p.f,
-          nationality: FLAG_TO_NAME[p.f] || '',
-          club: p.c,
-          position: p.p,
-          height_cm: p.h,
-          foot: p.ft === 'R' ? 'Right' : p.ft === 'L' ? 'Left' : 'Both',
-          market_value_eur: p.v,
-          stats: { appearances: p.s[0], goals: p.s[1], assists: p.s[2], xg_per90: p.r[0], avg_rating: p.r[1] },
-          scout_report: {
-            technical: { score: sc.t.s, text: sc.t.d },
-            physical: { score: sc.p.s, text: sc.p.d },
-            tactical: { score: sc.c.s, text: sc.c.d },
-            impact: { score: sc.i.s, text: sc.i.d },
-            potential: { score: sc.u.s, text: sc.u.d }
-          },
-          overall_rating: p.o,
-          sources: ['Transfermarkt','FBref'],
-          source_links: {}
-        };
-      });
+      allPlayers = DB.pl.map((p, i) => mapPlayer(p, i));
 
       bar.style.width = '100%';
-      text.textContent = '✅ 数据加载完成 · ' + allPlayers.length.toLocaleString() + ' 名球员';
+      text.textContent = '✅ ' + allPlayers.length.toLocaleString() + ' 名球员已就绪';
       document.getElementById('updateTime').textContent = '🕐 更新: ' + (DB.lu || '--');
       status.className = 'loading-bar';
-
       setTimeout(() => { status.style.display = 'none'; }, 1500);
     } else {
       throw new Error('No data');
     }
   } catch(e) {
-    text.textContent = '❌ 数据加载失败';
+    text.textContent = '❌ 加载失败';
     bar.style.width = '100%';
     console.error(e);
     return;
