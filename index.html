@@ -6,412 +6,182 @@
 <title>Youth Football Scout DB | 5万青年球员数据库</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:16px;scroll-behavior:smooth}
+html{font-size:16px}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#e6e6e6;min-height:100vh;line-height:1.5}
-.header{background:linear-gradient(135deg,#0d2818,#1a472a,#0d2818);border-bottom:2px solid #d4a843;padding:1.2rem 2rem;text-align:center}
-.header h1{font-size:1.6rem;color:#d4a843;letter-spacing:.05em}
-.header .sub{font-size:.8rem;color:#8b949e;margin-top:.15rem}
-.info-bar{background:#111827;border-bottom:1px solid #1e3a2f;padding:.5rem 1.5rem;text-align:center;font-size:.7rem;color:#8b949e;line-height:1.6}
-.info-bar b{color:#d4a843}
-.loading-bar{background:#161b22;padding:.5rem 2rem;text-align:center;font-size:.8rem;color:#d4a843}
-.loading-bar .bar{height:4px;background:#21262d;border-radius:2px;margin-top:.4rem;overflow:hidden}
-.loading-bar .bar-fill{height:100%;background:linear-gradient(90deg,#1a472a,#d4a843);width:0%;transition:width .3s}
-.controls{background:#161b22;border-bottom:1px solid #30363d;padding:.8rem 1.5rem;display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;justify-content:center;position:sticky;top:0;z-index:99}
-.control-group{display:flex;align-items:center;gap:.4rem}
-.control-group label{font-size:.75rem;color:#8b949e;white-space:nowrap}
-select,input[type=text]{background:#21262d;border:1px solid #30363d;color:#e6e6e6;padding:.35rem .6rem;border-radius:5px;font-size:.8rem;outline:none}
+.header{background:linear-gradient(135deg,#0d2818,#1a472a,#0d2818);border-bottom:2px solid #d4a843;padding:1rem 2rem;text-align:center}
+.header h1{font-size:1.5rem;color:#d4a843}
+.header .sub{font-size:.75rem;color:#8b949e;margin-top:.1rem}
+#status{padding:.6rem 1.5rem;text-align:center;font-size:.8rem;color:#d4a843;background:#161b22;border-bottom:1px solid #30363d}
+.controls{background:#161b22;border-bottom:1px solid #30363d;padding:.7rem 1.5rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:center;position:sticky;top:0;z-index:99}
+.controls label{font-size:.7rem;color:#8b949e}
+select,input[type=text]{background:#21262d;border:1px solid #30363d;color:#e6e6e6;padding:.3rem .5rem;border-radius:4px;font-size:.75rem;outline:none}
 select:focus,input:focus{border-color:#d4a843}
-select{min-width:100px;cursor:pointer}
-input[type=text]{width:170px}
-.age-display{background:#1a472a;color:#d4a843;padding:.2rem .5rem;border-radius:4px;font-weight:700;font-size:.85rem;min-width:70px;text-align:center}
-input[type=range]{-webkit-appearance:none;height:5px;background:#30363d;border-radius:3px;outline:none;flex:1}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:#d4a843;border-radius:50%;cursor:pointer}
-.sort-btn{background:#21262d;border:1px solid #30363d;color:#e6e6e6;padding:.35rem .6rem;border-radius:5px;font-size:.75rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+#ageDisplay{background:#1a472a;color:#d4a843;padding:.15rem .4rem;border-radius:3px;font-weight:700;font-size:.8rem}
+input[type=range]{-webkit-appearance:none;height:4px;background:#30363d;border-radius:2px;outline:none;width:60px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:#d4a843;border-radius:50%;cursor:pointer}
+.sort-btn{background:#21262d;border:1px solid #30363d;color:#e6e6e6;padding:.3rem .5rem;border-radius:4px;font-size:.7rem;cursor:pointer}
 .sort-btn:hover,.sort-btn.active{background:#1a472a;border-color:#d4a843;color:#d4a843}
-.count-bar{padding:.5rem 1.5rem;font-size:.75rem;color:#8b949e;display:flex;justify-content:space-between;flex-wrap:wrap}
-.count-bar span{color:#d4a843}
-.cards-grid{padding:0 1rem 1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
-.card{background:#161b22;border:1px solid #30363d;border-radius:10px;overflow:hidden;transition:transform .15s,border-color .15s;cursor:pointer}
-.card:hover{transform:translateY(-1px);border-color:#d4a843;box-shadow:0 4px 16px rgba(212,168,67,.12)}
-.card-header{background:linear-gradient(135deg,#1a2a1e,#1e1e2e);padding:.8rem;display:flex;align-items:center;gap:.6rem;border-bottom:1px solid #30363d}
-.card-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;border:2px solid #30363d;color:#fff;font-weight:800;letter-spacing:.5px}
-.avatar-fw{background:linear-gradient(135deg,#7f1d1d,#dc2626)}.avatar-mf{background:linear-gradient(135deg,#1e3a5f,#2563eb)}.avatar-df{background:linear-gradient(135deg,#5c4a0a,#eab308)}.avatar-gk{background:linear-gradient(135deg,#3f3f46,#a1a1aa)}
-.player-basic{flex:1;min-width:0}
-.player-name{font-size:1rem;font-weight:700;color:#fff}
-.player-meta{display:flex;gap:.3rem;margin-top:.25rem;flex-wrap:wrap}
-.meta-tag{font-size:.65rem;padding:.1rem .4rem;border-radius:8px;font-weight:600}
-.meta-tag.age{background:#1a472a;color:#d4a843}
-.meta-tag.pos{background:#21262d;color:#e6e6e6;border:1px solid #30363d}
-.meta-tag.club{background:#21262d;color:#8b949e}
-.card-stats{padding:.6rem .8rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;border-bottom:1px solid #21262d}
-.stat-item{text-align:center}
-.stat-val{font-size:1rem;font-weight:700;color:#fff}
-.stat-label{font-size:.6rem;color:#8b949e}
-.card-rating{padding:.6rem .8rem}
-.overall-rating{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
-.overall-score{font-size:1.4rem;font-weight:800;color:#d4a843}
-.rating-bar-bg{flex:1;height:6px;background:#21262d;border-radius:3px;margin-left:.6rem;overflow:hidden}
-.rating-bar-fill{height:100%;border-radius:3px}
-.rating-bar-fill.high{background:#22c55e}.rating-bar-fill.mid{background:#eab308}.rating-bar-fill.low{background:#ef4444}
-.mini-dims{display:grid;grid-template-columns:repeat(5,1fr);gap:.3rem;margin-top:.4rem}
-.mini-dim{text-align:center;font-size:.55rem}
-.mini-dim i{font-size:.8rem}
-.mini-dim s{font-weight:700;font-size:.75rem;margin-top:.05rem;display:block}
-.card-detail{display:none;padding:.7rem;background:#1a1d2e;border-top:1px solid #30363d}
-.card-detail.open{display:block}
-.detail-title{font-size:.7rem;color:#d4a843;margin-bottom:.5rem}
-.dim-row{margin-bottom:.4rem}
-.dim-row-header{display:flex;justify-content:space-between;font-size:.75rem}
-.dim-row-score{font-weight:700;color:#d4a843}
-.dim-row-bar{height:5px;background:#21262d;border-radius:2px;margin-top:.15rem;overflow:hidden}
-.dim-row-bar-fill{height:100%;border-radius:2px}
-.dim-row-text{font-size:.65rem;color:#8b949e;margin-top:.1rem}
-.mv-badge{font-size:.65rem;padding:.1rem .4rem;border-radius:8px;background:#2d1f0e;color:#d4a843;border:1px solid #5a3e1b}
-.footer{text-align:center;padding:1.5rem;font-size:.65rem;color:#484f58;border-top:1px solid #21262d}
-.no-results{grid-column:1/-1;text-align:center;padding:3rem;color:#8b949e}
-@media(max-width:768px){.cards-grid{grid-template-columns:1fr;padding:0 .5rem .5rem}.header h1{font-size:1.2rem}.controls{flex-direction:column;align-items:stretch}}
-@media(min-width:1400px){.cards-grid{grid-template-columns:repeat(4,1fr)}}
+#count{font-size:.75rem;color:#8b949e;padding:.4rem 1.5rem}
+#count span{color:#d4a843}
+.grid{padding:0 1rem 1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.8rem}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.card:hover{border-color:#d4a843}
+.card-top{background:linear-gradient(135deg,#1a2a1e,#1e1e2e);padding:.7rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid #30363d}
+.av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff;flex-shrink:0;border:1px solid #30363d}
+.av-fw{background:linear-gradient(135deg,#7f1d1d,#dc2626)}.av-mf{background:linear-gradient(135deg,#1e3a5f,#2563eb)}
+.av-df{background:linear-gradient(135deg,#5c4a0a,#eab308)}.av-gk{background:linear-gradient(135deg,#3f3f46,#a1a1aa)}
+.card-info{flex:1;min-width:0}
+.card-name{font-size:.95rem;font-weight:700;color:#fff}
+.card-tags{display:flex;gap:.3rem;margin-top:.2rem;flex-wrap:wrap}
+.tag{font-size:.6rem;padding:.1rem .35rem;border-radius:6px;font-weight:600}
+.tag-age{background:#1a472a;color:#d4a843}.tag-pos{background:#21262d;color:#e6e6e6;border:1px solid #30363d}
+.tag-club{background:#21262d;color:#8b949e}
+.card-stats{padding:.5rem .7rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:.3rem;border-bottom:1px solid #21262d}
+.stat{text-align:center}.stat-v{font-size:.95rem;font-weight:700;color:#fff}.stat-l{font-size:.55rem;color:#8b949e}
+.card-score{padding:.5rem .7rem}
+.score-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem}
+.score-num{font-size:1.3rem;font-weight:800;color:#d4a843}
+.score-bar{flex:1;height:5px;background:#21262d;border-radius:2px;overflow:hidden}
+.score-fill{height:100%;border-radius:2px}
+.s-hi{background:#22c55e}.s-md{background:#eab308}.s-lo{background:#ef4444}
+.dims{display:grid;grid-template-columns:repeat(5,1fr);gap:.2rem;margin-top:.3rem}
+.dim{text-align:center;font-size:.5rem}.dim em{font-size:.7rem}.dim b{font-weight:700;font-size:.7rem;display:block}
+.detail{display:none;padding:.6rem;background:#1a1d2e;border-top:1px solid #30363d;font-size:.65rem}
+.detail.open{display:block}
+.d-title{color:#d4a843;margin-bottom:.4rem}
+.d-row{margin-bottom:.3rem}
+.d-row-h{display:flex;justify-content:space-between}.d-row-s{font-weight:700;color:#d4a843}
+.d-row-b{height:4px;background:#21262d;border-radius:2px;margin:.1rem 0;overflow:hidden}
+.d-row-bf{height:100%}.d-row-t{color:#8b949e}
+@media(max-width:768px){.grid{grid-template-columns:1fr;padding:0 .5rem .5rem}}
+@media(min-width:1400px){.grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
+
 <header class="header">
 <h1>⚽ Youth Football Scout DB</h1>
-<div class="sub">全球22岁及以下 · 5万青年球员 · 每日12:00自动更新 · FBref/Transfermarkt/NXGN/FM数据</div>
+<div class="sub">全球22岁及以下 · 5万青年球员 · 每周一12:00更新</div>
 </header>
-<div class="info-bar">
-  📊 <b>数据来源</b>：FBref(StatsBond) · Transfermarkt · Goal NXGN · Guardian Next Gen · FM2026 · CIES · WhoScored &nbsp;|&nbsp;
-  📐 <b>评分权重</b>：球探报告 50% + 比赛数据 30% + 市场身价 20% &nbsp;|&nbsp;
-  🎯 <b>5维评分</b>：技术 · 身体 · 战术 · 影响 · 潜力 &nbsp;|&nbsp;
-  🕐 <b>更新</b>：每周一 12:00 CST
-</div>
-<div class="loading-bar" id="loadStatus">
-  <div id="loadText">正在加载数据...</div>
-  <div class="bar"><div class="bar-fill" id="loadBar"></div></div>
-</div>
+
+<div id="status">正在加载数据...</div>
+
 <div class="controls">
-  <div class="control-group">
-    <label>年龄</label>
-    <span class="age-display" id="ageDisplay">16-22</span>
-    <input type="range" id="ageMin" min="16" max="22" value="16">
-    <input type="range" id="ageMax" min="16" max="22" value="22">
-  </div>
-  <div class="control-group">
-    <label>位置</label>
-    <select id="posFilter"><option value="all">全部</option><option value="ST">ST</option><option value="LW">LW</option><option value="RW">RW</option><option value="CAM">CAM</option><option value="CM">CM</option><option value="CDM">CDM</option><option value="CB">CB</option><option value="LB">LB</option><option value="RB">RB</option><option value="GK">GK</option></select>
-  </div>
-  <div class="control-group">
-    <label>国籍</label>
-    <select id="nationFilter"><option value="all">全部</option></select>
-  </div>
-  <div class="control-group">
-    <input type="text" id="searchInput" placeholder="🔍 搜索姓名...">
-  </div>
-  <div style="display:flex;gap:.2rem;flex-wrap:wrap">
-    <button class="sort-btn active" data-sort="o">评分</button>
-    <button class="sort-btn" data-sort="a">年龄</button>
-    <button class="sort-btn" data-sort="g">进球</button>
-    <button class="sort-btn" data-sort="u">潜力</button>
-    <button class="sort-btn" data-sort="v">身价</button>
-  </div>
+  <label>年龄</label>
+  <span id="ageDisplay">16-22</span>
+  <input type="range" id="ageMin" min="16" max="22" value="16">
+  <input type="range" id="ageMax" min="16" max="22" value="22">
+  <label>位置</label>
+  <select id="posF"><option value="all">全部</option><option>ST</option><option>LW</option><option>RW</option><option>CAM</option><option>CM</option><option>CDM</option><option>CB</option><option>LB</option><option>RB</option><option>GK</option></select>
+  <label>国籍</label>
+  <select id="natF"><option value="all">全部</option></select>
+  <input type="text" id="search" placeholder="🔍 搜索姓名...">
+  <button class="sort-btn active" data-s="o">评分</button>
+  <button class="sort-btn" data-s="a">年龄</button>
+  <button class="sort-btn" data-s="g">进球</button>
+  <button class="sort-btn" data-s="u">潜力</button>
+  <button class="sort-btn" data-s="v">身价</button>
 </div>
-<div class="count-bar">
-  <span id="playerCount">显示 0 名球员</span>
-  <span id="updateTime"></span>
-</div>
-<div class="cards-grid" id="cardsGrid"></div>
-<footer class="footer">
-  📊 数据来源: FBref · Transfermarkt · Goal NXGN · Guardian Next Gen · FM2026 · CIES &nbsp;|&nbsp; 📐 算法: 球探50%+数据30%+市场20% &nbsp;|&nbsp; 🕐 每日北京时间12:00更新 &nbsp;|&nbsp; © 2026 Youth Scout DB
-</footer>
+
+<div id="count">显示 0 名球员</div>
+<div class="grid" id="grid"></div>
 
 <script src="players_data.js"></script>
 <script>
-// ========== Flag to Nation Name Map (Chinese) ==========
-const FLAG_TO_NAME = {
-"🏴󠁧󠁢󠁥󠁮󠁧󠁿":"英格兰","🇪🇸":"西班牙","🇫🇷":"法国","🇩🇪":"德国","🇮🇹":"意大利",
-"🇳🇱":"荷兰","🇵🇹":"葡萄牙","🇧🇷":"巴西","🇦🇷":"阿根廷","🇧🇪":"比利时",
-"🇭🇷":"克罗地亚","🇷🇸":"塞尔维亚","🇩🇰":"丹麦","🇸🇪":"瑞典","🇳🇴":"挪威",
-"🇵🇱":"波兰","🇨🇿":"捷克","🇦🇹":"奥地利","🇨🇭":"瑞士","🇹🇷":"土耳其",
-"🇺🇦":"乌克兰","🇬🇷":"希腊","🏴󠁧󠁢󠁳󠁣󠁴󠁿":"苏格兰","🇮🇪":"爱尔兰","🏴󠁧󠁢󠁷󠁬󠁳󠁿":"威尔士",
-"🇺🇾":"乌拉圭","🇨🇴":"哥伦比亚","🇪🇨":"厄瓜多尔","🇨🇱":"智利","🇵🇾":"巴拉圭",
-"🇲🇽":"墨西哥","🇺🇸":"美国","🇨🇦":"加拿大","🇯🇵":"日本","🇰🇷":"韩国",
-"🇳🇬":"尼日利亚","🇬🇭":"加纳","🇸🇳":"塞内加尔","🇨🇮":"科特迪瓦","🇨🇲":"喀麦隆",
-"🇲🇦":"摩洛哥","🇩🇿":"阿尔及利亚","🇪🇬":"埃及","🇹🇳":"突尼斯","🇿🇦":"南非",
-"🇦🇺":"澳大利亚","🇨🇳":"中国","🇮🇷":"伊朗","🇸🇦":"沙特阿拉伯","🇶🇦":"卡塔尔",
-"🇵🇪":"秘鲁","🇻🇪":"委内瑞拉","🇧🇴":"玻利维亚","🇨🇷":"哥斯达黎加","🇵🇦":"巴拿马",
-"🇸🇰":"斯洛伐克","🇸🇮":"斯洛文尼亚","🇭🇺":"匈牙利","🇷🇴":"罗马尼亚","🇧🇬":"保加利亚",
-"🇨🇾":"塞浦路斯",
-};
+// === Flag to Name ===
+const F2N={"🏴󠁧󠁢󠁥󠁮󠁧󠁿":"英格兰","🇪🇸":"西班牙","🇫🇷":"法国","🇩🇪":"德国","🇮🇹":"意大利","🇳🇱":"荷兰","🇵🇹":"葡萄牙","🇧🇷":"巴西","🇦🇷":"阿根廷","🇧🇪":"比利时","🇭🇷":"克罗地亚","🇷🇸":"塞尔维亚","🇩🇰":"丹麦","🇸🇪":"瑞典","🇳🇴":"挪威","🇵🇱":"波兰","🇨🇿":"捷克","🇦🇹":"奥地利","🇨🇭":"瑞士","🇹🇷":"土耳其","🇺🇦":"乌克兰","🇬🇷":"希腊","🏴󠁧󠁢󠁳󠁣󠁴󠁿":"苏格兰","🇮🇪":"爱尔兰","🏴󠁧󠁢󠁷󠁬󠁳󠁿":"威尔士","🇺🇾":"乌拉圭","🇨🇴":"哥伦比亚","🇪🇨":"厄瓜多尔","🇨🇱":"智利","🇵🇾":"巴拉圭","🇲🇽":"墨西哥","🇺🇸":"美国","🇨🇦":"加拿大","🇯🇵":"日本","🇰🇷":"韩国","🇳🇬":"尼日利亚","🇬🇭":"加纳","🇸🇳":"塞内加尔","🇨🇮":"科特迪瓦","🇨🇲":"喀麦隆","🇲🇦":"摩洛哥","🇩🇿":"阿尔及利亚","🇪🇬":"埃及","🇹🇳":"突尼斯","🇿🇦":"南非","🇦🇺":"澳大利亚","🇨🇳":"中国","🇮🇷":"伊朗","🇸🇦":"沙特","🇶🇦":"卡塔尔","🇵🇪":"秘鲁","🇻🇪":"委内瑞拉","🇧🇴":"玻利维亚","🇨🇷":"哥斯达黎加","🇵🇦":"巴拿马","🇸🇰":"斯洛伐克","🇸🇮":"斯洛文尼亚","🇭🇺":"匈牙利","🇷🇴":"罗马尼亚","🇧🇬":"保加利亚","🇨🇾":"塞浦路斯"};
+const PC={'ST':'av-fw','LW':'av-fw','RW':'av-fw','CAM':'av-fw','CM':'av-mf','CDM':'av-mf','CB':'av-df','LB':'av-df','RB':'av-df','GK':'av-gk'};
 
-// ========== App State ==========
-let allPlayers = [];
-let currentSort = 'o';
-let sortDesc = true;
-const PAGE_SIZE = 100;
-let renderedCount = 0;
+var all=[],sort='o',desc=true,R=0,PAGE=50;
 
-// ========== Data Loading ==========
-function mapPlayer(p, i) {
-  const sc = p.sc;
-  return {
-    id: `p${i}`, name: p.n, name_cn: '', age: p.a,
-    nationality_flag: p.f, nationality: FLAG_TO_NAME[p.f] || '',
-    club: p.c, position: p.p, height_cm: p.h,
-    foot: p.ft === 'R' ? 'Right' : p.ft === 'L' ? 'Left' : 'Both',
-    market_value_eur: p.v,
-    stats: { appearances: p.s[0], goals: p.s[1], assists: p.s[2], xg_per90: p.r[0], avg_rating: p.r[1] },
-    scout_report: {
-      technical: { score: sc.t.s, text: sc.t.d },
-      physical: { score: sc.p.s, text: sc.p.d },
-      tactical: { score: sc.c.s, text: sc.c.d },
-      impact: { score: sc.i.s, text: sc.i.d },
-      potential: { score: sc.u.s, text: sc.u.d }
-    },
-    overall_rating: p.o, sources: ['Transfermarkt','FBref'], source_links: {}
+// === Process raw data ===
+var st=document.getElementById('status');
+st.textContent='正在处理数据...';
+
+all=DB.pl.map(function(p,i){
+  var s=p.sc;
+  return{
+    id:'p'+i,n:p.n,a:p.a,f:p.f,nat:F2N[p.f]||'',c:p.c,po:p.p,h:p.h,
+    ft:p.ft==='R'?'Right':p.ft==='L'?'Left':'Both',v:p.v,
+    st:{ap:p.s[0],g:p.s[1],as:p.s[2],xg:p.r[0],rt:p.r[1]},
+    sc:{t:{s:s.t.s,d:s.t.d},p:{s:s.p.s,d:s.p.d},c:{s:s.c.s,d:s.c.d},i:{s:s.i.s,d:s.i.d},u:{s:s.u.s,d:s.u.d}},
+    o:p.o
   };
-}
+});
+st.textContent='✅ '+all.length.toLocaleString()+' 名球员已就绪';
+setTimeout(function(){st.style.display='none'},1500);
 
-function loadData() {
-  const status = document.getElementById('loadStatus');
-  const text = document.getElementById('loadText');
-  const bar = document.getElementById('loadBar');
+// === Nations ===
+(function(){
+  var s=new Set(),sel=document.getElementById('natF'),arr=[];
+  all.forEach(function(p){if(!s.has(p.nat)){s.add(p.nat);arr.push({f:p.f,n:p.nat});}});
+  arr.sort(function(a,b){return a.n.localeCompare(b.n);});
+  arr.forEach(function(x){var o=document.createElement('option');o.value=x.f;o.textContent=x.f+' '+x.n;sel.appendChild(o);});
+})();
 
-  try {
-    if (typeof DB !== 'undefined' && DB.pl) {
-      text.textContent = '正在处理数据...';
-      bar.style.width = '50%';
-
-      text.textContent = '正在转换数据格式...';
-      allPlayers = DB.pl.map((p, i) => mapPlayer(p, i));
-
-      bar.style.width = '100%';
-      text.textContent = '✅ ' + allPlayers.length.toLocaleString() + ' 名球员已就绪';
-      document.getElementById('updateTime').textContent = '🕐 更新: ' + (DB.lu || '--');
-      status.className = 'loading-bar';
-      setTimeout(() => { status.style.display = 'none'; }, 1500);
-    } else {
-      throw new Error('No data');
-    }
-  } catch(e) {
-    text.textContent = '❌ 加载失败';
-    bar.style.width = '100%';
-    console.error(e);
-    return;
-  }
-
-  populateNations();
-  renderMore();
-  bindEvents();
-}
-
-// ========== Populate Nations ==========
-function populateNations() {
-  const seen = new Set();
-  const sel = document.getElementById('nationFilter');
-  const nations = [];
-  allPlayers.forEach(p => {
-    const key = p.nationality;
-    if (key && !seen.has(key)) {
-      seen.add(key);
-      nations.push({flag: p.nationality_flag, name: key});
-    }
-  });
-  nations.sort((a,b) => a.name.localeCompare(b.name));
-  nations.forEach(n => {
-    const opt = document.createElement('option');
-    opt.value = n.flag;
-    opt.textContent = n.flag + ' ' + n.name;
-    sel.appendChild(opt);
-  });
-}
-
-// ========== Filter & Sort ==========
-function getFilteredPlayers() {
-  const ageMin = parseInt(document.getElementById('ageMin').value);
-  const ageMax = parseInt(document.getElementById('ageMax').value);
-  const posFilter = document.getElementById('posFilter').value;
-  const nationFilter = document.getElementById('nationFilter').value;
-  const search = document.getElementById('searchInput').value.toLowerCase();
-
-  let filtered = allPlayers.filter(p => {
-    if (p.age < ageMin || p.age > ageMax) return false;
-    if (posFilter !== 'all' && p.position !== posFilter) return false;
-    if (nationFilter !== 'all' && p.nationality_flag !== nationFilter) return false;
-    if (search && !p.name.toLowerCase().includes(search)) return false;
+// === Filter ===
+function filtered(){
+  var amin=+document.getElementById('ageMin').value,amax=+document.getElementById('ageMax').value;
+  var pf=document.getElementById('posF').value,nf=document.getElementById('natF').value;
+  var q=document.getElementById('search').value.toLowerCase();
+  var r=all.filter(function(p){
+    if(p.a<amin||p.a>amax)return false;
+    if(pf!=='all'&&p.po!==pf)return false;
+    if(nf!=='all'&&p.f!==nf)return false;
+    if(q&&p.n.toLowerCase().indexOf(q)===-1)return false;
     return true;
   });
-
-  const sortKeys = {
-    'o': p => p.overall_rating,
-    'a': p => p.age,
-    'g': p => p.stats.goals,
-    'u': p => p.scout_report.potential.score,
-    'v': p => p.market_value_eur || 0
-  };
-  const keyFn = sortKeys[currentSort];
-  filtered.sort((a, b) => sortDesc ? keyFn(b) - keyFn(a) : keyFn(a) - keyFn(b));
-
-  return filtered;
+  var k={'o':function(p){return p.o},'a':function(p){return p.a},'g':function(p){return p.st.g},'u':function(p){return p.sc.u.s},'v':function(p){return p.v||0}};
+  r.sort(function(a,b){return desc?k[sort](b)-k[sort](a):k[sort](a)-k[sort](b);});
+  return r;
 }
 
-// ========== Formatting ==========
-function formatMV(eur) {
-  if (!eur) return '';
-  if (eur >= 1e8) return '€' + (eur/1e6).toFixed(0) + 'M';
-  if (eur >= 1e6) return '€' + (eur/1e6).toFixed(1) + 'M';
-  if (eur >= 1e3) return '€' + (eur/1e3).toFixed(0) + 'K';
-  return '€' + eur;
-}
-
-// ========== Virtual Rendering ==========
-function renderMore() {
-  const filtered = getFilteredPlayers();
-  const grid = document.getElementById('cardsGrid');
-
-  if (renderedCount === 0) {
-    grid.innerHTML = '';
-    document.getElementById('playerCount').textContent = '📋 显示 ' + filtered.length.toLocaleString() + ' / ' + allPlayers.length.toLocaleString() + ' 名球员';
-  }
-
-  if (filtered.length === 0) {
-    grid.innerHTML = '<div class="no-results">😔 无匹配球员，请调整筛选</div>';
-    return;
-  }
-
-  const toRender = Math.min(renderedCount + PAGE_SIZE, filtered.length);
-  const batch = filtered.slice(renderedCount, toRender);
-
-  batch.forEach(p => {
-    grid.appendChild(createCard(p));
-  });
-
-  renderedCount = toRender;
-
-  if (renderedCount < filtered.length) {
-    document.getElementById('playerCount').textContent =
-      '📋 已加载 ' + renderedCount.toLocaleString() + ' / ' + filtered.length.toLocaleString() + ' 名 · 继续滚动加载更多';
-  }
-}
-
-function createCard(p) {
-  const sc = p.overall_rating >= 8.5 ? 'high' : p.overall_rating >= 7.5 ? 'mid' : 'low';
-  const dims = p.scout_report;
-  const dc = s => s >= 8.5 ? 'high' : s >= 7.5 ? 'mid' : 'low';
-  const posClass = {'ST':'avatar-fw','LW':'avatar-fw','RW':'avatar-fw','CAM':'avatar-fw','CM':'avatar-mf','CDM':'avatar-mf','CB':'avatar-df','LB':'avatar-df','RB':'avatar-df','GK':'avatar-gk'}[p.position] || 'avatar-mf';
-
-  const div = document.createElement('div');
-  div.className = 'card';
-  div.innerHTML = `
-    <div class="card-header" onclick="this.parentElement.querySelector('.card-detail').classList.toggle('open')">
-      <div class="card-avatar ${posClass}">${p.position}</div>
-      <div class="player-basic">
-        <div class="player-name">${p.nationality_flag} ${p.nationality} · ${p.name}</div>
-        <div class="player-meta">
-          <span class="meta-tag age">${p.age}岁</span>
-          <span class="meta-tag pos">${p.position}</span>
-          <span class="meta-tag club">${p.club}</span>
-          ${mv ? `<span class="mv-badge">💰 ${mv}</span>` : ''}
-        </div>
-      </div>
-    </div>
-    <div class="card-stats">
-      <div class="stat-item"><div class="stat-val">${p.stats.appearances}</div><div class="stat-label">出场</div></div>
-      <div class="stat-item"><div class="stat-val">${p.stats.goals} ⚽</div><div class="stat-label">进球</div></div>
-      <div class="stat-item"><div class="stat-val">${p.stats.assists} 🎯</div><div class="stat-label">助攻</div></div>
-    </div>
-    <div class="card-rating" onclick="this.parentElement.querySelector('.card-detail').classList.toggle('open')">
-      <div class="overall-rating">
-        <span class="overall-score">${p.overall_rating}<small style="font-size:.6rem;color:#8b949e">/10</small></span>
-        <div class="rating-bar-bg"><div class="rating-bar-fill ${sc}" style="width:${p.overall_rating*10}%"></div></div>
-      </div>
-      <div class="mini-dims">
-        <div class="mini-dim"><i>🎯</i><s>${dims.technical.score}</s></div>
-        <div class="mini-dim"><i>💪</i><s>${dims.physical.score}</s></div>
-        <div class="mini-dim"><i>🧠</i><s>${dims.tactical.score}</s></div>
-        <div class="mini-dim"><i>⚡</i><s>${dims.impact.score}</s></div>
-        <div class="mini-dim"><i>🚀</i><s>${dims.potential.score}</s></div>
-      </div>
-    </div>
-    <div class="card-detail">
-      <div class="detail-title">📋 详细球探报告</div>
-      ${dimRow('🎯 技术',dims.technical)}${dimRow('💪 身体',dims.physical)}${dimRow('🧠 战术',dims.tactical)}${dimRow('⚡ 影响',dims.impact)}${dimRow('🚀 潜力',dims.potential)}
-    </div>`;
+// === Card ===
+function card(p){
+  var sc=p.o>=8.5?'s-hi':p.o>=7.5?'s-md':'s-lo';
+  var dc=function(s){return s>=8.5?'s-hi':s>=7.5?'s-md':'s-lo';};
+  var mv=p.v>=1e8?'€'+(p.v/1e6).toFixed(0)+'M':p.v>=1e6?'€'+(p.v/1e6).toFixed(1)+'M':'';
+  var d=p.sc;
+  var div=document.createElement('div');div.className='card';
+  div.innerHTML='<div class="card-top" onclick="this.parentElement.querySelector(\'.detail\').classList.toggle(\'open\')">'+
+    '<div class="av '+(PC[p.po]||'av-mf')+'">'+p.po+'</div>'+
+    '<div class="card-info"><div class="card-name">'+p.f+' '+p.nat+' · '+p.n+'</div>'+
+    '<div class="card-tags"><span class="tag tag-age">'+p.a+'岁</span><span class="tag tag-pos">'+p.po+'</span><span class="tag tag-club">'+p.c+'</span>'+(mv?'<span class="tag" style="background:#2d1f0e;color:#d4a843">💰'+mv+'</span>':'')+'</div></div></div>'+
+    '<div class="card-stats"><div class="stat"><div class="stat-v">'+p.st.ap+'</div><div class="stat-l">出场</div></div><div class="stat"><div class="stat-v">'+p.st.g+' ⚽</div><div class="stat-l">进球</div></div><div class="stat"><div class="stat-v">'+p.st.as+' 🎯</div><div class="stat-l">助攻</div></div></div>'+
+    '<div class="card-score" onclick="this.parentElement.querySelector(\'.detail\').classList.toggle(\'open\')">'+
+    '<div class="score-top"><span class="score-num">'+p.o+'</span><div class="score-bar"><div class="score-fill '+sc+'" style="width:'+(p.o*10)+'%"></div></div></div>'+
+    '<div class="dims"><div class="dim"><em>🎯</em><b>'+d.t.s+'</b></div><div class="dim"><em>💪</em><b>'+d.p.s+'</b></div><div class="dim"><em>🧠</em><b>'+d.c.s+'</b></div><div class="dim"><em>⚡</em><b>'+d.i.s+'</b></div><div class="dim"><em>🚀</em><b>'+d.u.s+'</b></div></div></div>'+
+    '<div class="detail"><div class="d-title">📋 详细球探报告</div>'+
+    dr('🎯 技术',d.t,dc(d.t.s))+dr('💪 身体',d.p,dc(d.p.s))+dr('🧠 战术',d.c,dc(d.c.s))+dr('⚡ 影响',d.i,dc(d.i.s))+dr('🚀 潜力',d.u,dc(d.u.s))+'</div>';
   return div;
 }
+function dr(l,d,c){return'<div class="d-row"><div class="d-row-h"><span>'+l+'</span><span class="d-row-s">'+d.s+'/10</span></div><div class="d-row-b"><div class="d-row-bf '+c+'" style="width:'+(d.s*10)+'%"></div></div><div class="d-row-t">'+d.d+'</div></div>';}
 
-function dimRow(label, dim) {
-  const c = dim.score >= 8.5 ? 'high' : dim.score >= 7.5 ? 'mid' : 'low';
-  return `<div class="dim-row">
-    <div class="dim-row-header"><span>${label}</span><span class="dim-row-score">${dim.score}/10</span></div>
-    <div class="dim-row-bar"><div class="dim-row-bar-fill ${c}" style="width:${dim.score*10}%"></div></div>
-    <div class="dim-row-text">${dim.text}</div></div>`;
+// === Render ===
+function render(){
+  var f=filtered(),grid=document.getElementById('grid');
+  document.getElementById('count').innerHTML='📋 <span>'+f.length.toLocaleString()+'</span> / '+all.length.toLocaleString()+' 名球员';
+  if(R===0)grid.innerHTML='';
+  if(f.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#8b949e">无匹配球员</div>';return;}
+  var end=Math.min(R+PAGE,f.length);
+  for(var i=R;i<end;i++)grid.appendChild(card(f[i]));
+  R=end;
 }
+function reRender(){R=0;render();}
 
-// ========== Infinite Scroll ==========
-let scrollTimer;
-window.addEventListener('scroll', () => {
-  clearTimeout(scrollTimer);
-  scrollTimer = setTimeout(() => {
-    const grid = document.getElementById('cardsGrid');
-    if (!grid.lastElementChild) return;
-    const lastCard = grid.lastElementChild;
-    const rect = lastCard.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 600) {
-      renderMore();
-    }
-  }, 100);
-}, {passive: true});
+// === Events ===
+document.getElementById('ageMin').oninput=function(){var x=+this.value,y=+document.getElementById('ageMax').value;if(x>y)document.getElementById('ageMax').value=x;document.getElementById('ageDisplay').textContent=x+'-'+document.getElementById('ageMax').value;reRender();};
+document.getElementById('ageMax').oninput=function(){var x=+this.value,y=+document.getElementById('ageMin').value;if(x<y)document.getElementById('ageMin').value=x;document.getElementById('ageDisplay').textContent=document.getElementById('ageMin').value+'-'+x;reRender();};
+document.getElementById('posF').onchange=reRender;
+document.getElementById('natF').onchange=reRender;
+var st2;document.getElementById('search').oninput=function(){clearTimeout(st2);st2=setTimeout(reRender,300);};
+[].forEach.call(document.querySelectorAll('.sort-btn'),function(b){b.onclick=function(){var k=b.dataset.s;if(sort===k)desc=!desc;else{sort=k;desc=k==='a';}[].forEach.call(document.querySelectorAll('.sort-btn'),function(x){x.classList.remove('active');});b.classList.add('active');reRender();};});
 
-// ========== Events ==========
-function bindEvents() {
-  const ageMin = document.getElementById('ageMin');
-  const ageMax = document.getElementById('ageMax');
+// === Scroll ===
+var st1;window.addEventListener('scroll',function(){clearTimeout(st1);st1=setTimeout(function(){var g=document.getElementById('grid');if(!g.lastChild)return;var r=g.lastChild.getBoundingClientRect();if(r.top<window.innerHeight+600)render();},100);},{passive:true});
 
-  const reRender = () => { renderedCount = 0; document.getElementById('cardsGrid').innerHTML = ''; renderMore(); };
-
-  ageMin.addEventListener('input', () => {
-    const min = parseInt(ageMin.value); const max = parseInt(ageMax.value);
-    if (min > max) ageMax.value = min;
-    document.getElementById('ageDisplay').textContent = ageMin.value + '-' + ageMax.value;
-    reRender();
-  });
-  ageMax.addEventListener('input', () => {
-    const min = parseInt(ageMin.value); const max = parseInt(ageMax.value);
-    if (max < min) ageMin.value = max;
-    document.getElementById('ageDisplay').textContent = ageMin.value + '-' + ageMax.value;
-    reRender();
-  });
-
-  document.getElementById('posFilter').addEventListener('change', reRender);
-  document.getElementById('nationFilter').addEventListener('change', reRender);
-  document.getElementById('searchInput').addEventListener('input', function() {
-    clearTimeout(this._timer);
-    this._timer = setTimeout(reRender, 300);
-  });
-
-  document.querySelectorAll('.sort-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const key = btn.dataset.sort;
-      if (currentSort === key) sortDesc = !sortDesc;
-      else { currentSort = key; sortDesc = (key === 'a'); }
-      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      reRender();
-    });
-  });
-}
-
-// ========== Boot ==========
-(function init() {
-  var t = document.getElementById('loadText');
-  try {
-    if (typeof DB === 'undefined') { t.textContent = '❌ DB undefined'; return; }
-    if (!DB.pl) { t.textContent = '❌ DB.pl missing'; return; }
-    t.textContent = '正在处理 ' + DB.pl.length.toLocaleString() + ' 条数据...';
-    setTimeout(function(){ loadData(); }, 50);
-  } catch(e) {
-    t.textContent = '❌ Init error: ' + e.message;
-  }
-})();
+// === Start ===
+render();
 </script>
 </body>
 </html>
