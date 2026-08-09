@@ -400,13 +400,14 @@ function bindEvents() {
 }
 
 // ========== Boot ==========
-document.addEventListener('DOMContentLoaded', () => {
+(function init() {
   if (typeof DB !== 'undefined' && DB.pl) {
     loadData();
   } else {
-    document.getElementById('loadText').textContent = '❌ 数据文件加载失败，请确保 players_data.js 在同一目录';
+    document.getElementById('loadText').textContent = '❌ 数据加载失败，请刷新重试';
+    document.getElementById('loadBar').style.width = '100%';
   }
-});
+})();
 </script>
 </body>
 </html>
