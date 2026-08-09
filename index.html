@@ -180,6 +180,7 @@ function loadData() {
       text.textContent = '正在处理数据...';
       bar.style.width = '50%';
 
+      text.textContent = '正在转换数据格式...';
       allPlayers = DB.pl.map((p, i) => mapPlayer(p, i));
 
       bar.style.width = '100%';
@@ -401,11 +402,14 @@ function bindEvents() {
 
 // ========== Boot ==========
 (function init() {
-  if (typeof DB !== 'undefined' && DB.pl) {
-    loadData();
-  } else {
-    document.getElementById('loadText').textContent = '❌ 数据加载失败，请刷新重试';
-    document.getElementById('loadBar').style.width = '100%';
+  var t = document.getElementById('loadText');
+  try {
+    if (typeof DB === 'undefined') { t.textContent = '❌ DB undefined'; return; }
+    if (!DB.pl) { t.textContent = '❌ DB.pl missing'; return; }
+    t.textContent = '正在处理 ' + DB.pl.length.toLocaleString() + ' 条数据...';
+    setTimeout(function(){ loadData(); }, 50);
+  } catch(e) {
+    t.textContent = '❌ Init error: ' + e.message;
   }
 })();
 </script>
