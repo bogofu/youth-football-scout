@@ -124,21 +124,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 <script src="players_data.js"></script>
 <script>
-// ========== Flag to Nation Name Map ==========
+// ========== Flag to Nation Name Map (Chinese) ==========
 const FLAG_TO_NAME = {
-"🏴󠁧󠁢󠁥󠁮󠁧󠁿":"England","🇪🇸":"Spain","🇫🇷":"France","🇩🇪":"Germany","🇮🇹":"Italy",
-"🇳🇱":"Netherlands","🇵🇹":"Portugal","🇧🇷":"Brazil","🇦🇷":"Argentina","🇧🇪":"Belgium",
-"🇭🇷":"Croatia","🇷🇸":"Serbia","🇩🇰":"Denmark","🇸🇪":"Sweden","🇳🇴":"Norway",
-"🇵🇱":"Poland","🇨🇿":"Czechia","🇦🇹":"Austria","🇨🇭":"Switzerland","🇹🇷":"Turkey",
-"🇺🇦":"Ukraine","🇬🇷":"Greece","🏴󠁧󠁢󠁳󠁣󠁴󠁿":"Scotland","🇮🇪":"Ireland","🏴󠁧󠁢󠁷󠁬󠁳󠁿":"Wales",
-"🇺🇾":"Uruguay","🇨🇴":"Colombia","🇪🇨":"Ecuador","🇨🇱":"Chile","🇵🇾":"Paraguay",
-"🇲🇽":"Mexico","🇺🇸":"USA","🇨🇦":"Canada","🇯🇵":"Japan","🇰🇷":"Korea Republic",
-"🇳🇬":"Nigeria","🇬🇭":"Ghana","🇸🇳":"Senegal","🇨🇮":"Cote d'Ivoire","🇨🇲":"Cameroon",
-"🇲🇦":"Morocco","🇩🇿":"Algeria","🇪🇬":"Egypt","🇹🇳":"Tunisia","🇿🇦":"South Africa",
-"🇦🇺":"Australia","🇨🇳":"China PR","🇮🇷":"Iran","🇸🇦":"Saudi Arabia","🇶🇦":"Qatar",
-"🇵🇪":"Peru","🇻🇪":"Venezuela","🇧🇴":"Bolivia","🇨🇷":"Costa Rica","🇵🇦":"Panama",
-"🇸🇰":"Slovakia","🇸🇮":"Slovenia","🇭🇺":"Hungary","🇷🇴":"Romania","🇧🇬":"Bulgaria",
-"🇨🇾":"Cyprus",
+"🏴󠁧󠁢󠁥󠁮󠁧󠁿":"英格兰","🇪🇸":"西班牙","🇫🇷":"法国","🇩🇪":"德国","🇮🇹":"意大利",
+"🇳🇱":"荷兰","🇵🇹":"葡萄牙","🇧🇷":"巴西","🇦🇷":"阿根廷","🇧🇪":"比利时",
+"🇭🇷":"克罗地亚","🇷🇸":"塞尔维亚","🇩🇰":"丹麦","🇸🇪":"瑞典","🇳🇴":"挪威",
+"🇵🇱":"波兰","🇨🇿":"捷克","🇦🇹":"奥地利","🇨🇭":"瑞士","🇹🇷":"土耳其",
+"🇺🇦":"乌克兰","🇬🇷":"希腊","🏴󠁧󠁢󠁳󠁣󠁴󠁿":"苏格兰","🇮🇪":"爱尔兰","🏴󠁧󠁢󠁷󠁬󠁳󠁿":"威尔士",
+"🇺🇾":"乌拉圭","🇨🇴":"哥伦比亚","🇪🇨":"厄瓜多尔","🇨🇱":"智利","🇵🇾":"巴拉圭",
+"🇲🇽":"墨西哥","🇺🇸":"美国","🇨🇦":"加拿大","🇯🇵":"日本","🇰🇷":"韩国",
+"🇳🇬":"尼日利亚","🇬🇭":"加纳","🇸🇳":"塞内加尔","🇨🇮":"科特迪瓦","🇨🇲":"喀麦隆",
+"🇲🇦":"摩洛哥","🇩🇿":"阿尔及利亚","🇪🇬":"埃及","🇹🇳":"突尼斯","🇿🇦":"南非",
+"🇦🇺":"澳大利亚","🇨🇳":"中国","🇮🇷":"伊朗","🇸🇦":"沙特阿拉伯","🇶🇦":"卡塔尔",
+"🇵🇪":"秘鲁","🇻🇪":"委内瑞拉","🇧🇴":"玻利维亚","🇨🇷":"哥斯达黎加","🇵🇦":"巴拿马",
+"🇸🇰":"斯洛伐克","🇸🇮":"斯洛文尼亚","🇭🇺":"匈牙利","🇷🇴":"罗马尼亚","🇧🇬":"保加利亚",
+"🇨🇾":"塞浦路斯",
 };
 
 // ========== App State ==========
