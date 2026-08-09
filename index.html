@@ -213,15 +213,20 @@ function loadData() {
 function populateNations() {
   const seen = new Set();
   const sel = document.getElementById('nationFilter');
+  const nations = [];
   allPlayers.forEach(p => {
-    const key = p.nationality_flag;
-    if (!seen.has(key)) {
+    const key = p.nationality;
+    if (key && !seen.has(key)) {
       seen.add(key);
-      const opt = document.createElement('option');
-      opt.value = p.nationality_flag;
-      opt.textContent = p.nationality_flag;
-      sel.appendChild(opt);
+      nations.push({flag: p.nationality_flag, name: key});
     }
+  });
+  nations.sort((a,b) => a.name.localeCompare(b.name));
+  nations.forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n.flag;
+    opt.textContent = n.flag + ' ' + n.name;
+    sel.appendChild(opt);
   });
 }
 
