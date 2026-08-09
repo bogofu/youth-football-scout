@@ -11,6 +11,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#e6e6e
 .header{background:linear-gradient(135deg,#0d2818,#1a472a,#0d2818);border-bottom:2px solid #d4a843;padding:1.2rem 2rem;text-align:center}
 .header h1{font-size:1.6rem;color:#d4a843;letter-spacing:.05em}
 .header .sub{font-size:.8rem;color:#8b949e;margin-top:.15rem}
+.info-bar{background:#111827;border-bottom:1px solid #1e3a2f;padding:.5rem 1.5rem;text-align:center;font-size:.7rem;color:#8b949e;line-height:1.6}
+.info-bar b{color:#d4a843}
 .loading-bar{background:#161b22;padding:.5rem 2rem;text-align:center;font-size:.8rem;color:#d4a843}
 .loading-bar .bar{height:4px;background:#21262d;border-radius:2px;margin-top:.4rem;overflow:hidden}
 .loading-bar .bar-fill{height:100%;background:linear-gradient(90deg,#1a472a,#d4a843);width:0%;transition:width .3s}
@@ -75,6 +77,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <h1>⚽ Youth Football Scout DB</h1>
 <div class="sub">全球22岁及以下 · 5万青年球员 · 每日12:00自动更新 · FBref/Transfermarkt/NXGN/FM数据</div>
 </header>
+<div class="info-bar">
+  📊 <b>数据来源</b>：FBref(StatsBond) · Transfermarkt · Goal NXGN · Guardian Next Gen · FM2026 · CIES · WhoScored &nbsp;|&nbsp;
+  📐 <b>评分权重</b>：球探报告 50% + 比赛数据 30% + 市场身价 20% &nbsp;|&nbsp;
+  🎯 <b>5维评分</b>：技术 · 身体 · 战术 · 影响 · 潜力 &nbsp;|&nbsp;
+  🕐 <b>更新</b>：每周一 12:00 CST
+</div>
 <div class="loading-bar" id="loadStatus">
   <div id="loadText">正在加载数据...</div>
   <div class="bar"><div class="bar-fill" id="loadBar"></div></div>
@@ -116,6 +124,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 <script src="players_data.js"></script>
 <script>
+// ========== Flag to Nation Name Map ==========
+const FLAG_TO_NAME = {
+"🏴󠁧󠁢󠁥󠁮󠁧󠁿":"England","🇪🇸":"Spain","🇫🇷":"France","🇩🇪":"Germany","🇮🇹":"Italy",
+"🇳🇱":"Netherlands","🇵🇹":"Portugal","🇧🇷":"Brazil","🇦🇷":"Argentina","🇧🇪":"Belgium",
+"🇭🇷":"Croatia","🇷🇸":"Serbia","🇩🇰":"Denmark","🇸🇪":"Sweden","🇳🇴":"Norway",
+"🇵🇱":"Poland","🇨🇿":"Czechia","🇦🇹":"Austria","🇨🇭":"Switzerland","🇹🇷":"Turkey",
+"🇺🇦":"Ukraine","🇬🇷":"Greece","🏴󠁧󠁢󠁳󠁣󠁴󠁿":"Scotland","🇮🇪":"Ireland","🏴󠁧󠁢󠁷󠁬󠁳󠁿":"Wales",
+"🇺🇾":"Uruguay","🇨🇴":"Colombia","🇪🇨":"Ecuador","🇨🇱":"Chile","🇵🇾":"Paraguay",
+"🇲🇽":"Mexico","🇺🇸":"USA","🇨🇦":"Canada","🇯🇵":"Japan","🇰🇷":"Korea Republic",
+"🇳🇬":"Nigeria","🇬🇭":"Ghana","🇸🇳":"Senegal","🇨🇮":"Cote d'Ivoire","🇨🇲":"Cameroon",
+"🇲🇦":"Morocco","🇩🇿":"Algeria","🇪🇬":"Egypt","🇹🇳":"Tunisia","🇿🇦":"South Africa",
+"🇦🇺":"Australia","🇨🇳":"China PR","🇮🇷":"Iran","🇸🇦":"Saudi Arabia","🇶🇦":"Qatar",
+"🇵🇪":"Peru","🇻🇪":"Venezuela","🇧🇴":"Bolivia","🇨🇷":"Costa Rica","🇵🇦":"Panama",
+"🇸🇰":"Slovakia","🇸🇮":"Slovenia","🇭🇺":"Hungary","🇷🇴":"Romania","🇧🇬":"Bulgaria",
+"🇨🇾":"Cyprus",
+};
+
 // ========== App State ==========
 let allPlayers = [];
 let currentSort = 'o';
@@ -143,6 +168,7 @@ function loadData() {
           name_cn: '',
           age: p.a,
           nationality_flag: p.f,
+          nationality: FLAG_TO_NAME[p.f] || '',
           club: p.c,
           position: p.p,
           height_cm: p.h,
@@ -280,7 +306,7 @@ function createCard(p) {
     <div class="card-header" onclick="this.parentElement.querySelector('.card-detail').classList.toggle('open')">
       <div class="card-avatar">${initials}</div>
       <div class="player-basic">
-        <div class="player-name">${p.nationality_flag} ${p.name}</div>
+        <div class="player-name">${p.nationality_flag} ${p.nationality} · ${p.name}</div>
         <div class="player-meta">
           <span class="meta-tag age">${p.age}岁</span>
           <span class="meta-tag pos">${p.position}</span>
