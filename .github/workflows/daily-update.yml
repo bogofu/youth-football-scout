@@ -34,14 +34,13 @@ jobs:
 
       - name: Copy to deploy
         run: |
-          cp players_data.js deploy/
-          cp 50k.html deploy/index.html
+          cp 50k.html index.html
 
       - name: Commit and push
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add players_data.json players_data.js deploy/
+          git add players_data.json players_data.js index.html
           git diff --staged --quiet || git commit -m "Daily update $(date +%Y-%m-%d)"
           git push origin main
           git push origin main:gh-pages --force
