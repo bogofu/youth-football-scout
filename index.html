@@ -101,7 +101,7 @@ st.textContent='正在处理数据...';
 all=DB.pl.map(function(p,i){
   var s=p.sc;
   return{
-    id:'p'+i,n:p.n,a:p.a,f:p.f,nat:F2N[p.f]||'',c:p.c,po:p.p,h:p.h,
+    id:'p'+i,n:p.n,cn:p.cn||'',a:p.a,f:p.f,nat:F2N[p.f]||'',c:p.c,po:p.p,h:p.h,
     ft:p.ft==='R'?'Right':p.ft==='L'?'Left':'Both',v:p.v,
     st:{ap:p.s[0],g:p.s[1],as:p.s[2],xg:p.r[0],rt:p.r[1]},
     sc:{t:{s:s.t.s,d:s.t.d},p:{s:s.p.s,d:s.p.d},c:{s:s.c.s,d:s.c.d},i:{s:s.i.s,d:s.i.d},u:{s:s.u.s,d:s.u.d}},
@@ -145,7 +145,7 @@ function card(p){
   var div=document.createElement('div');div.className='card';
   div.innerHTML='<div class="card-top" onclick="this.parentElement.querySelector(\'.detail\').classList.toggle(\'open\')">'+
     '<div class="av '+(PC[p.po]||'av-mf')+'">'+p.po+'</div>'+
-    '<div class="card-info"><div class="card-name">'+p.f+' '+p.nat+' · '+p.n+'</div>'+
+    '<div class="card-info"><div class="card-name">'+p.f+' '+p.nat+' · '+p.cn+' <small style="color:#8b949e;font-weight:400">'+p.n+'</small></div>'+
     '<div class="card-tags"><span class="tag tag-age">'+p.a+'岁</span><span class="tag tag-pos">'+p.po+'</span><span class="tag tag-club">'+p.c+'</span>'+(mv?'<span class="tag" style="background:#2d1f0e;color:#d4a843">💰'+mv+'</span>':'')+'</div></div></div>'+
     '<div class="card-stats"><div class="stat"><div class="stat-v">'+p.st.ap+'</div><div class="stat-l">出场</div></div><div class="stat"><div class="stat-v">'+p.st.g+' ⚽</div><div class="stat-l">进球</div></div><div class="stat"><div class="stat-v">'+p.st.as+' 🎯</div><div class="stat-l">助攻</div></div></div>'+
     '<div class="card-score" onclick="this.parentElement.querySelector(\'.detail\').classList.toggle(\'open\')">'+
